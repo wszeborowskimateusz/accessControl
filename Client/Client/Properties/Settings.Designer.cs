@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace AccessControl.Properties
+namespace Client.Properties
 {
 
 
