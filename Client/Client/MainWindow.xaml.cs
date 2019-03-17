@@ -23,6 +23,11 @@ namespace Client
         public MainWindow()
         {
             InitializeComponent();
+            SslTcpClient c = new SslTcpClient();
+            string response = c.SendMessage("HELLO");
+            Console.Out.WriteLine("Message from a server is: {0}", response);
+            response = c.SendMessage("Its me again");
+            Console.Out.WriteLine("Message from a server is: {0}", response);
         }
     }
 }

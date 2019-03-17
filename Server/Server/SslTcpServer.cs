@@ -50,9 +50,8 @@ namespace Server
 
                 //TODO Process the message
 
-                //byte[] message = Encoding.UTF8.GetBytes("Hello from the server.<EOF>");
-                //Console.WriteLine("Sending hello message.");
-                //sslStream.Write(message);
+                byte[] message = Encoding.UTF8.GetBytes("Hello from the server.<EOF>");
+                sslStream.Write(message);
 
                 //TODO Send response 
 
