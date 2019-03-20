@@ -52,7 +52,7 @@ namespace Server
 
         private string Authorize(string token, string tableName)
         {
-            if (accessControl.context.TablePermissions.Any(t => string.Compare(t.nameOfTable, tableName) == 0)) return "NO_PERMISSION";
+            if (!accessControl.context.TablePermissions.Any(t => string.Compare(t.nameOfTable, tableName) == 0)) return "NO_PERMISSION";
             switch (accessControl.checkPermissions(token, tableName))
             {
                 case AUTHORIZATION_RESPONSE.NO_PERMISSION:
@@ -82,39 +82,39 @@ namespace Server
                     response.Append("name;description;producer_id ");
                     foreach(var raw in accessControl.context.Articles)
                     {
-                        response.Append(raw.name + ";" + raw.description + ";" + raw.producer_id);
+                        response.Append(raw.name + ";" + raw.description.Replace(' ', '+') + ";" + raw.producer_id + " ");
                     }
                     break;
                 case "SpecificArticle":
                     response.Append("id;sale_id;price;article_id ");
                     foreach (var raw in accessControl.context.SpecificArticles)
                     {
-                        response.Append(raw.id + ";" + raw.sale_id + ";" + raw.price + ";" + raw.article_id);
+                        response.Append(raw.id + ";" + raw.sale_id + ";" + raw.price + ";" + raw.article_id + " ");
                     }
                     break;
                 case "Sale":
                     response.Append("id;netPrice;grossPrice;tax;customer_id ");
                     foreach (var raw in accessControl.context.Sales)
                     {
-                        response.Append(raw.id + ";" + raw.netPrice + raw.grossPrice + raw.tax + raw.customer_id);
+                        response.Append(raw.id + ";" + raw.netPrice + raw.grossPrice + raw.tax + raw.customer_id + " ");
                     }
                     break;
                 case "Producer":
                     response.Append("id;name;address ");
                     foreach (var raw in accessControl.context.Producers)
                     {
-                        response.Append(raw.id + ";" + raw.name + ";" + raw.address);
+                        response.Append(raw.id + ";" + raw.name + ";" + raw.address.Replace(' ', '+') + " ");
                     }
                     break;
                 case "Customer":
                     response.Append("id;name;surname ");
                     foreach (var raw in accessControl.context.Customers)
                     {
-                        response.Append(raw.id + ";" + raw.name + ";" + raw.surname);
+                        response.Append(raw.id + ";" + raw.name + ";" + raw.surname + " ");
                     }
                     break;
             }
-
+            if (response[response.Length - 1].CompareTo(' ') == 0) response.Length--;
             return response.ToString();
         }
 
@@ -178,9 +178,9 @@ namespace Server
                 columnNames.Append(pair[0] + ",");
 
             }
-            if(columnNames[columnNames.Length - 1].CompareTo(",") == 0)
+            if(columnNames[columnNames.Length - 1].CompareTo(',') == 0)
                 columnNames.Length--;
-            if (columnValues[columnValues.Length - 1].CompareTo(",") == 0)
+            if (columnValues[columnValues.Length - 1].CompareTo(',') == 0)
                 columnValues.Length--;
 
 

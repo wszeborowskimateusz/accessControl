@@ -59,11 +59,9 @@ namespace Server
             //get users salt
             User user = context.Users.First(u => u.login == login);
             string hashedPass = passward + user.salt;
-            //byte[] bytes = Encoding.UTF8.GetBytes(hashedPass);
 
-            Console.Out.WriteLine("AUTHENTICATING. Passward: {0}\nSalt: {1}\nHash(plain): {2}\nHash: {4}\nUser password(DB): {3}", passward, user.salt, hashedPass, user.password, sha256_hash(hashedPass));
+            //Console.Out.WriteLine("AUTHENTICATING. Passward: {0}\nSalt: {1}\nHash(plain): {2}\nHash: {4}\nUser password(DB): {3}", passward, user.salt, hashedPass, user.password, sha256_hash(hashedPass));
 
-            //if(Encoding.UTF8.GetString(hasher.ComputeHash(bytes)).CompareTo(user.password) == 0)
             if(sha256_hash(hashedPass).ToUpper().CompareTo(user.password) == 0)
             {
                 string token = RandomString(128);
@@ -86,6 +84,7 @@ namespace Server
                 {
                     if (DateTime.Compare(user.expirationDay, DateTime.Today) > 0)
                     {
+                        Console.Out.WriteLine("There is token and there is authentification");
                         isAutorize = true;
                         userPermissions = user.levelOfPermissions;
                         user.expirationDay.AddMinutes(10);
