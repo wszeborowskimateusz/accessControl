@@ -24,9 +24,7 @@ namespace Client
         {
             InitializeComponent();
             SslTcpClient c = new SslTcpClient();
-            string response = c.SendMessage("HELLO");
-            Console.Out.WriteLine("Message from a server is: {0}", response);
-            response = c.SendMessage("Its me again");
+            string response = c.SendMessage("AUTH jan alamakota");
             Console.Out.WriteLine("Message from a server is: {0}", response);
         }
     }

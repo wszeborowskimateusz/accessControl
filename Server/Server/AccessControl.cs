@@ -24,7 +24,7 @@ namespace Server
 
     class AccessControl
     {
-        private BSKdbContext context;
+        public BSKdbContext context;
         private List<UserToken> listOfUsersToken;
         private static Random random;
 
@@ -42,6 +42,16 @@ namespace Server
               .Select(s => s[random.Next(s.Length)]).ToArray());
         }
 
+        private String sha256_hash(String value)
+        {
+            using (SHA256 hash = SHA256Managed.Create())
+            {
+                return String.Concat(hash
+                  .ComputeHash(Encoding.UTF8.GetBytes(value))
+                  .Select(item => item.ToString("x2")));
+            }
+        }
+
         //returns user token if user was authenticated, or otherwise returns ""
         public string UserLogIn(string login, string passward)
         {
@@ -49,9 +59,12 @@ namespace Server
             //get users salt
             User user = context.Users.First(u => u.login == login);
             string hashedPass = passward + user.salt;
-            byte[] bytes = Encoding.ASCII.GetBytes(hashedPass);
+            //byte[] bytes = Encoding.UTF8.GetBytes(hashedPass);
 
-            if(Encoding.ASCII.GetString(hasher.ComputeHash(bytes)) == user.password)
+            Console.Out.WriteLine("AUTHENTICATING. Passward: {0}\nSalt: {1}\nHash(plain): {2}\nHash: {4}\nUser password(DB): {3}", passward, user.salt, hashedPass, user.password, sha256_hash(hashedPass));
+
+            //if(Encoding.UTF8.GetString(hasher.ComputeHash(bytes)).CompareTo(user.password) == 0)
+            if(sha256_hash(hashedPass).ToUpper().CompareTo(user.password) == 0)
             {
                 string token = RandomString(128);
                 listOfUsersToken.Add(new UserToken(token , DateTime.Today.AddHours(1), user.levelOfPermissions));
@@ -62,7 +75,7 @@ namespace Server
             return "";
         }
 
-        public bool checkPermissions(string token, string tableName)
+        public AUTHORIZATION_RESPONSE checkPermissions(string token, string tableName)
         {
             bool isAutorize = false;
             int userPermissions = 0;
@@ -81,19 +94,32 @@ namespace Server
                     {
                         //remove expired tokens
                         listOfUsersToken.RemoveAt(i);
+                        return AUTHORIZATION_RESPONSE.NO_USER;
                     }
 
                     break;
                 }
             }
-            if (!isAutorize) return false;
+            if (!isAutorize) return AUTHORIZATION_RESPONSE.NO_USER;
 
             int? tablePermissions = context.TablePermissions.FirstOrDefault(table => table.nameOfTable == tableName)?.levelOfPermissions;
 
-            if (!tablePermissions.HasValue) return false;
+            if (!tablePermissions.HasValue) return AUTHORIZATION_RESPONSE.NO_PERMISSION;
 
-            return userPermissions >= tablePermissions.Value;
+            if (userPermissions >= tablePermissions.Value) return AUTHORIZATION_RESPONSE.OK;
+            else return AUTHORIZATION_RESPONSE.NO_PERMISSION;
         }
 
+        public void Logout(string token)
+        {
+            for (int i = listOfUsersToken.Count - 1; i >= 0; i--)
+            {
+                if (listOfUsersToken.ElementAt(i).token == token)
+                {
+                    listOfUsersToken.RemoveAt(i);
+                    break;
+                }
+            }
+        }
     }
 }

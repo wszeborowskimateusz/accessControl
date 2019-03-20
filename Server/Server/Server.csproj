@@ -52,10 +52,20 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BSKdbContext.cs" />
+    <Compile Include="AccessControl.cs" />
+    <Compile Include="AUTHORIZATION_RESPONSE.cs" />
+    <Compile Include="DB\Article.cs" />
+    <Compile Include="DB\BSKdbContext.cs" />
+    <Compile Include="DB\Customer.cs" />
+    <Compile Include="DB\Producer.cs" />
+    <Compile Include="MessageInterpreter.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="DB\Sale.cs" />
+    <Compile Include="DB\SpecificArticle.cs" />
     <Compile Include="SslTcpServer.cs" />
+    <Compile Include="DB\TablePermission.cs" />
+    <Compile Include="DB\User.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

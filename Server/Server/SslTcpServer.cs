@@ -16,6 +16,7 @@ namespace Server
     {
         private TcpListener listener;
         private X509Certificate serverCertificate = null;
+        private MessageInterpreter interpreter = new MessageInterpreter(new AccessControl(new BSKdbContext()));
 
         // The certificate parameter specifies the name of the file 
         // containing the machine certificate. File cert.pem in Certificate catalog
@@ -48,12 +49,9 @@ namespace Server
                 string messageData = ReadMessage(sslStream);
                 Console.WriteLine("Received: {0}", messageData);
 
-                //TODO Process the message
-
-                byte[] message = Encoding.UTF8.GetBytes("Hello from the server.<EOF>");
+                byte[] message = Encoding.UTF8.GetBytes(interpreter.InterpretMessage(messageData) + "<EOF>");
+                Console.Out.WriteLine("Message sent to client is {0}", Encoding.UTF8.GetString(message));
                 sslStream.Write(message);
-
-                //TODO Send response 
 
             }
             catch (AuthenticationException e)
