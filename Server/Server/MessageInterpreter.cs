@@ -29,13 +29,15 @@ namespace Server
                     return GetTable(messageParts[1], messageParts[2]);
                 case "SET":
                     if (messageParts.Length < 4) return "";
-                    return Set(messageParts[1], messageParts[2], messageParts[3]);
+                    string[] arguments = new string[messageParts.Length - 3];
+                    Array.Copy(messageParts, 3, arguments, 0, messageParts.Length - 3);
+                    return Set(messageParts[1], messageParts[2], arguments);
                 case "DEL":
                     if (messageParts.Length < 4) return "";
-                    return Set(messageParts[1], messageParts[2], messageParts[3]);
+                    return Del(messageParts[1], messageParts[2], messageParts[3]);
                 case "ADD":
                     if (messageParts.Length < 4) return "";
-                    return Set(messageParts[1], messageParts[2], messageParts[3]);
+                    return Add(messageParts[1], messageParts[2], messageParts[3]);
                 case "LOGOUT":
                     if (messageParts.Length < 2) return "";
                     return Logout(messageParts[1]);
@@ -118,31 +120,36 @@ namespace Server
             return response.ToString();
         }
 
-        private string Set(string token, string tableName, string arguments)
+        private string Set(string token, string tableName, string[] listOvUpdates)
         {
             string authorize = Authorize(token, tableName);
             if (authorize != "OK") return authorize;
 
             StringBuilder sqlCommand = new StringBuilder();
-            sqlCommand.Append("UPDATE " + tableName + " SET ");
-
-            foreach(var argument in arguments.Split(';'))
+            foreach (var update in listOvUpdates)
             {
-                string[] row = argument.Split('=');
-                string rowId = row[0];
-                string colName = row[1];
-                string colVal = row[3];
-                if(IsStringColumn(colName))
-                    sqlCommand.Append(colName + "='" + colVal + "'");
-                else
-                    sqlCommand.Append(colName + "=" + colVal);
-                if (string.Compare(tableName, "Article") == 0)
-                    sqlCommand.Append(" WHERE name='" + rowId + "';");
-                else
-                    sqlCommand.Append(" WHERE id=" + rowId + ";");
-            }
+                sqlCommand.Clear();
 
-            accessControl.context.Database.ExecuteSqlCommand(sqlCommand.ToString());
+                sqlCommand.Append("UPDATE " + tableName + " SET ");
+
+                foreach (var argument in update.Split(';'))
+                {
+                    string[] row = argument.Split('=');
+                    string rowId = row[0];
+                    string colName = row[1];
+                    string colVal = row[2];
+                    if (IsStringColumn(colName))
+                        sqlCommand.Append(colName + "='" + colVal + "'");
+                    else
+                        sqlCommand.Append(colName + "=" + colVal);
+                    if (string.Compare(tableName, "Article") == 0)
+                        sqlCommand.Append(" WHERE name='" + rowId + "';");
+                    else
+                        sqlCommand.Append(" WHERE id=" + rowId + ";");
+                }
+
+                accessControl.context.Database.ExecuteSqlCommand(sqlCommand.ToString());
+            }
 
             return "OK";
         }
