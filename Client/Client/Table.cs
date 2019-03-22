@@ -21,6 +21,19 @@ namespace Client
 
         }
 
-        
+        public void PrintTable()
+        {
+
+            Console.Out.WriteLine("Table name: {0}", tableName);
+            Console.Out.Write("( ");
+            listOfColumns.ForEach(c => Console.Out.Write(c + " "));
+            Console.Out.WriteLine(" )");
+
+            listOfRows.ForEach(raw => {
+                Console.Out.Write("( ");
+                raw.ForEach(r => Console.Out.Write(r + " "));
+                Console.Out.WriteLine(" )");
+            });
+        }
     }
 }

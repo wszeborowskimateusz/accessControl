@@ -24,10 +24,13 @@ namespace Client
         {
             InitializeComponent();
             SslTcpClient c = new SslTcpClient();
-            string response = c.SendMessage("AUTH john alamakota");
+            DataManipulator data = new DataManipulator(c);
+            string response = data.LogIn("john", "alamakota");
             Console.Out.WriteLine("Message from a server is: {0}", response);
-            response = c.SendMessage("SET " + response.Split(' ')[1] + " Customer 1=name=Jan 2=name=Anna");
-            Console.Out.WriteLine("Message from a server is: {0}", response);
+            //Table t = data.GetTable(response, "Customer");
+            //t.PrintTable();
+            //data.DelRow(response, "Customer", "1");
+            //data.AddRow(response, "Customer", "id=1", "name=Jan", "surname=Nowak");
         }
     }
 }
