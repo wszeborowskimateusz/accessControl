@@ -151,6 +151,8 @@ namespace Server
                 accessControl.context.Database.ExecuteSqlCommand(sqlCommand.ToString());
             }
 
+            accessControl.context = new BSKdbContext();
+
             return "OK";
         }
 

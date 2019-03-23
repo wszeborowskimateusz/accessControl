@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -67,7 +68,7 @@ namespace Client
                 table = tab;
 
             DataGrid dataGrid = new DataGrid();
-            dataGrid.IsReadOnly = false;
+            dataGrid.IsReadOnly = true;
             dataGrid.AutoGenerateColumns = false;
 
             foreach (var column in t.listOfColumns)
@@ -113,6 +114,14 @@ namespace Client
             addButton.Margin = new Thickness(100, 100, 100, 10);
             addButton.Click += (object sender, RoutedEventArgs e) => AddButton_Click(sender, e, t); 
             grid.Children.Add(addButton);
+
+            Button editButton = new Button();
+            editButton.Content = "Edit";
+            editButton.VerticalAlignment = VerticalAlignment.Bottom;
+            editButton.HorizontalAlignment = HorizontalAlignment.Right;
+            editButton.Margin = new Thickness(100, 100, 50, 10);
+            editButton.Click += (object sender, RoutedEventArgs e) => EditButton_Click(sender, e, t, dataGrid);
+            grid.Children.Add(editButton);
 
             table.Content = grid;
 
@@ -184,6 +193,70 @@ namespace Client
 
                 
                 dataManipulator.DelRow(token, table.tableName, textBox.Text);
+                refreshTab(table.tableName);
+                window.Close();
+            };
+            stackPanel.Children.Add(submitButton);
+
+            window.Content = stackPanel;
+            window.ShowDialog();
+        }
+
+        private void EditButton_Click(object sender, RoutedEventArgs e, Table table, DataGrid grid)
+        {
+            var window = new Window();
+            window.Width = 350;
+            window.Height = 350;
+            var stackPanel = new StackPanel { Orientation = Orientation.Vertical };
+            NameScope.SetNameScope(stackPanel, new NameScope());
+
+            if (grid.SelectedItems.Count < 1)
+                window.Close();
+
+            CustomTable row = (CustomTable)grid.SelectedItems[0];
+
+
+            foreach (var column in table.listOfColumns)
+            {
+                
+                stackPanel.Children.Add(new Label { Content = column });
+                TextBox textbox = new TextBox();
+                textbox.Text = ((string)row.Custom[column]);
+                textbox.Name = column;
+
+                if ((column.CompareTo("id") == 0) || table.tableName.CompareTo("Article") == 0 && column.CompareTo("name") == 0)
+                {
+                    textbox.Visibility = Visibility.Hidden;
+                }
+
+                stackPanel.RegisterName(textbox.Name, textbox);
+                stackPanel.Children.Add(textbox);
+            }
+            Button submitButton = new Button { Content = "Submit" };
+            submitButton.Click += (object sender2, RoutedEventArgs e2) => {
+                List<string> arguments = new List<string>();
+                foreach (var column in table.listOfColumns)
+                {
+                    TextBox textBox = (TextBox)stackPanel.FindName(column);
+
+                    if (table.tableName.CompareTo("Article") == 0)
+                    {
+                        if (column.CompareTo("name") != 0)
+                        {
+                            TextBox name = (TextBox)stackPanel.FindName("name");
+                            arguments.Add(name.Text + "=" + column + "=" + textBox.Text.Replace(' ', '+'));
+                        }
+                    }
+                    else if (!(column.CompareTo("id") == 0))
+                    {
+                        TextBox id = (TextBox)stackPanel.FindName("id");
+                        arguments.Add(id.Text + "=" + column + "=" + textBox.Text.Replace(' ', '+'));
+                    }
+
+
+
+                }
+                dataManipulator.SetTable(token, table.tableName, arguments.ToArray());
                 refreshTab(table.tableName);
                 window.Close();
             };
