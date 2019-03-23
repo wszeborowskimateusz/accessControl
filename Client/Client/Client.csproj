@@ -58,7 +58,17 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="DataManipulation.xaml.cs">
+      <DependentUpon>DataManipulation.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="DataManipulator.cs" />
+    <Compile Include="SERVER_RESPONSE.cs" />
     <Compile Include="SslTcpClient.cs" />
+    <Compile Include="Table.cs" />
+    <Page Include="DataManipulation.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

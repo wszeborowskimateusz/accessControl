@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Client
 {
-    class DataManipulator
+    public class DataManipulator
     {
         private SslTcpClient tcpClient;
 

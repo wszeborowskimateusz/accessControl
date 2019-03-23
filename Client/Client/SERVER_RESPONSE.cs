@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Client
 {
-    enum SERVER_RESPONSE
+    public enum SERVER_RESPONSE
     {
         OK,
         NO_PERMISSION,

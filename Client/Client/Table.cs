@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Client
 {
-    class Table
+    public class Table
     {
         public List<List<string>> listOfRows;
 

@@ -98,7 +98,7 @@ namespace Server
                     response.Append("id;netPrice;grossPrice;tax;customer_id ");
                     foreach (var raw in accessControl.context.Sales)
                     {
-                        response.Append(raw.id + ";" + raw.netPrice + raw.grossPrice + raw.tax + raw.customer_id + " ");
+                        response.Append(raw.id + ";" + raw.netPrice + ";" + raw.grossPrice + ";" + raw.tax + ";" + raw.customer_id + " ");
                     }
                     break;
                 case "Producer":

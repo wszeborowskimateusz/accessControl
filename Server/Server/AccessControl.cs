@@ -57,7 +57,8 @@ namespace Server
         {
             SHA256 hasher = SHA256.Create();
             //get users salt
-            User user = context.Users.First(u => u.login == login);
+            User user = context.Users.FirstOrDefault(u => u.login == login);
+            if (user == null) return "";
             string hashedPass = passward + user.salt;
 
             //Console.Out.WriteLine("AUTHENTICATING. Passward: {0}\nSalt: {1}\nHash(plain): {2}\nHash: {4}\nUser password(DB): {3}", passward, user.salt, hashedPass, user.password, sha256_hash(hashedPass));

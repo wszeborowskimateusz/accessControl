@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Client
 {
-    class SslTcpClient
+    public class SslTcpClient
     {
         //IP addresss of our server
         private string machineName = "localhost";

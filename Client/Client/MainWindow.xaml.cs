@@ -23,14 +23,33 @@ namespace Client
         public MainWindow()
         {
             InitializeComponent();
+            //SslTcpClient c = new SslTcpClient();
+            //DataManipulator data = new DataManipulator(c);
+            //string response = data.LogIn("john", "alamakota");
+            //Console.Out.WriteLine("Message from a server is: {0}", response);
+            ////Table t = data.GetTable(response, "Customer");
+            ////t.PrintTable();
+            ////data.DelRow(response, "Customer", "1");
+            ////data.AddRow(response, "Customer", "id=1", "name=Jan", "surname=Nowak");
+        }
+
+        private void LogInButtonClick(object sender, RoutedEventArgs e)
+        {
+            string login = textBoxLogin.Text;
+            string password = textBoxPass.Password;
             SslTcpClient c = new SslTcpClient();
             DataManipulator data = new DataManipulator(c);
-            string response = data.LogIn("john", "alamakota");
-            Console.Out.WriteLine("Message from a server is: {0}", response);
-            //Table t = data.GetTable(response, "Customer");
-            //t.PrintTable();
-            //data.DelRow(response, "Customer", "1");
-            //data.AddRow(response, "Customer", "id=1", "name=Jan", "surname=Nowak");
+            string token = data.LogIn(login, password);
+            if (token.CompareTo("") != 0)
+            {
+                DataManipulation win2 = new DataManipulation(token, data);
+                win2.Show();
+                this.Close();
+            }
+            else
+            {
+                MessageBox.Show("Credentials incorrect");
+            }
         }
     }
 }
