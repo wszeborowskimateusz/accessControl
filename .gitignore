@@ -190,3 +190,5 @@ git_stats/*
 StyleCop.Cache
 bin
 obj
+/Client/.vs/Client/v15/Server/sqlite3/storage.ide-shm
+/Client/.vs/Client/v15/Server/sqlite3/storage.ide-wal
